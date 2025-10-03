@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  growbox:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: growbox
+
+    # Privileged mode required for GPIO access on Jetson Nano
+    privileged: true
+
+    # Network mode host for easier access to I2C and network services
+    network_mode: host
+
+    # Environment variables
+    environment:
+      - GROWBOX_SECRET_KEY=${GROWBOX_SECRET_KEY:-changeme_in_production}
+      - TZ=Europe/Amsterdam  # Change to your timezone
+
+    # Volume mappings
+    volumes:
+      # Persist database and logs
+      - ./data:/app/data
+      - ./logs:/app/logs
+
+      # Configuration files (read-only recommended)
+      - ./config:/app/config:ro
+
+      # GPIO and I2C device access (Jetson Nano specific)
+      - /sys/class/gpio:/sys/class/gpio
+      - /dev/i2c-0:/dev/i2c-0
+      - /dev/i2c-1:/dev/i2c-1
+      - /dev/gpiochip0:/dev/gpiochip0
+      - /dev/gpiochip1:/dev/gpiochip1
+
+    # Device access (alternative to privileged mode - more secure)
+    # Uncomment and use instead of privileged: true if you prefer
+    # devices:
+    #   - /dev/i2c-0:/dev/i2c-0
+    #   - /dev/i2c-1:/dev/i2c-1
+    #   - /dev/gpiochip0:/dev/gpiochip0
+    #   - /dev/gpiochip1:/dev/gpiochip1
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Resource limits (important for 2GB RAM Jetson Nano)
+    deploy:
+      resources:
+        limits:
+          memory: 1G  # Limit to 1GB to leave room for system
+        reservations:
+          memory: 512M
+
+    # Logging configuration (prevent log files from filling up disk)
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

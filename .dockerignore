@@ -1,0 +1,64 @@
+# Git files
+.git
+.gitignore
+
+# Python cache
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Specification files
+.specify/
+.claude/
+specs/
+
+# Data and logs (will be mounted as volumes)
+data/
+logs/
+*.db
+*.log
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Images (not needed in container)
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Docker files (not needed inside container)
+Dockerfile
+docker-compose.yml
+.dockerignore
