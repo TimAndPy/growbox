@@ -1,0 +1,39 @@
+{
+  "temperature": {
+    "type": "DHT22",
+    "gpio_pin": 4,
+    "read_interval_seconds": 5,
+    "min_value": -40,
+    "max_value": 80,
+    "unit": "celsius"
+  },
+  "humidity": {
+    "type": "DHT22",
+    "gpio_pin": 4,
+    "read_interval_seconds": 5,
+    "min_value": 0,
+    "max_value": 100,
+    "unit": "percent"
+  },
+  "light": {
+    "type": "BH1750",
+    "i2c_bus": 1,
+    "i2c_address": "0x23",
+    "read_interval_seconds": 5,
+    "min_value": 0,
+    "max_value": 200000,
+    "unit": "ppfd",
+    "lux_to_ppfd_factor": 0.0185
+  },
+  "water": {
+    "type": "HC-SR04",
+    "gpio_trigger_pin": 23,
+    "gpio_echo_pin": 24,
+    "read_interval_seconds": 5,
+    "min_value": 0,
+    "max_value": 100,
+    "unit": "liters",
+    "tank_height_cm": 50,
+    "tank_area_cm2": 2000
+  }
+}

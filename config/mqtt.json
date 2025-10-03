@@ -1,0 +1,25 @@
+{
+  "broker_url": "localhost",
+  "broker_port": 1883,
+  "box_id": "001",
+  "qos_sensor_data": 1,
+  "qos_device_commands": 2,
+  "qos_device_states": 1,
+  "qos_system_status": 1,
+  "heartbeat_interval_seconds": 10,
+  "watchdog_timeout_seconds": 30,
+  "reconnect_delay_seconds": 5,
+  "max_reconnect_attempts": 5,
+  "topics": {
+    "sensors": "growbox/{box_id}/sensors/{sensor}",
+    "device_command": "growbox/{box_id}/devices/{device}/command",
+    "device_state": "growbox/{box_id}/devices/{device}/state",
+    "system_status": "growbox/{box_id}/status"
+  },
+  "lwt": {
+    "topic": "growbox/{box_id}/status",
+    "message": "{\"connection_state\": \"offline\"}",
+    "qos": 1,
+    "retained": true
+  }
+}

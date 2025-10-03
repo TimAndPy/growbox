@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MQTT Sensor Data Message",
+  "description": "Schema for sensor reading messages published to MQTT broker",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Message schema version for compatibility"
+    },
+    "message_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+      "description": "UUID v4 for message deduplication"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp when reading was taken"
+    },
+    "box_id": {
+      "type": "string",
+      "pattern": "^[0-9]{3}$",
+      "description": "GrowBox identifier (e.g., '001')"
+    },
+    "type": {
+      "type": "string",
+      "const": "sensor_reading",
+      "description": "Message type discriminator"
+    },
+    "sensor": {
+      "type": "string",
+      "enum": ["temperature", "humidity", "light", "water"],
+      "description": "Sensor type"
+    },
+    "value": {
+      "type": "number",
+      "description": "Measured value (numeric)"
+    },
+    "unit": {
+      "type": "string",
+      "enum": ["celsius", "percent", "ppfd", "liters"],
+      "description": "Unit of measurement"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["valid", "error", "stale"],
+      "default": "valid",
+      "description": "Reading validity status"
+    }
+  },
+  "required": ["schema_version", "message_id", "timestamp", "box_id", "type", "sensor", "value", "unit"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "schema_version": "1.0",
+      "message_id": "a3f7c8d2-4e1b-4c9a-8f3e-1d2c3b4a5f6g",
+      "timestamp": "2025-10-03T19:45:23Z",
+      "box_id": "001",
+      "type": "sensor_reading",
+      "sensor": "temperature",
+      "value": 23.5,
+      "unit": "celsius",
+      "status": "valid"
+    },
+    {
+      "schema_version": "1.0",
+      "message_id": "b4g8d9e3-5f2c-4d0b-9g4f-2e3d4c5b6a7h",
+      "timestamp": "2025-10-03T19:45:23Z",
+      "box_id": "001",
+      "type": "sensor_reading",
+      "sensor": "humidity",
+      "value": 68.0,
+      "unit": "percent",
+      "status": "valid"
+    }
+  ],
+  "mqtt_topic": "growbox/{box_id}/sensors/{sensor}",
+  "qos": 1,
+  "retained": true
+}

@@ -1,0 +1,39 @@
+{
+  "temperature": {
+    "min_value": 22.0,
+    "max_value": 25.0,
+    "warning_threshold": 2.0,
+    "hysteresis": 0.5,
+    "unit": "celsius"
+  },
+  "humidity": {
+    "min_value": 60.0,
+    "max_value": 70.0,
+    "warning_threshold": 5.0,
+    "hysteresis": 3.0,
+    "unit": "percent"
+  },
+  "water_level": {
+    "min_value": 30.0,
+    "max_value": 100.0,
+    "warning_threshold": 10.0,
+    "hysteresis": 2.0,
+    "unit": "liters"
+  },
+  "growth_phases": {
+    "vegetative": {
+      "light_schedule": "18/6",
+      "light_on_hours": 18,
+      "light_off_hours": 6,
+      "temperature_adjustment": 0,
+      "humidity_adjustment": 0
+    },
+    "flowering": {
+      "light_schedule": "12/12",
+      "light_on_hours": 12,
+      "light_off_hours": 12,
+      "temperature_adjustment": 0,
+      "humidity_adjustment": -5
+    }
+  }
+}

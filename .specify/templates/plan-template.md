@@ -47,7 +47,31 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+**I. Code Minimalism**:
+- [ ] Feature scope is minimal and necessary (no speculative additions)
+- [ ] Solution approach avoids unnecessary abstractions
+- [ ] Plan identifies code/resources to remove during implementation
+
+**II. Zero Redundancy**:
+- [ ] No duplicate implementations planned
+- [ ] Consistent naming and patterns with existing codebase
+- [ ] Shared logic extraction identified where applicable
+
+**III. UI Consistency**:
+- [ ] UI patterns consistent with existing design system (or new system defined)
+- [ ] Visual review checkpoint included in tasks
+- [ ] Interaction patterns align with current app behavior
+
+**IV. Quality Over Speed**:
+- [ ] Design phase completed before implementation tasks
+- [ ] Test strategy validates correctness, not just coverage
+- [ ] Refactoring tasks identified for existing code issues
+
+**V. Clean Architecture**:
+- [ ] Folder structure is logical and matches domain
+- [ ] Each component has single, clear responsibility
+- [ ] No orphaned or unused resources will be created
+- [ ] Dependencies are unidirectional
 
 ## Project Structure
 
@@ -216,4 +240,4 @@ directories captured above]
 - [ ] Complexity deviations documented
 
 ---
-*Based on Constitution v2.1.1 - See `/memory/constitution.md`*
+*Based on Constitution v1.0.0 - See `.specify/memory/constitution.md`*

@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MQTT System Status Message",
+  "description": "Schema for system health and connectivity status published by Jetson Nano",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Message schema version for compatibility"
+    },
+    "message_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+      "description": "UUID v4 for message deduplication"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp of status update"
+    },
+    "box_id": {
+      "type": "string",
+      "pattern": "^[0-9]{3}$",
+      "description": "GrowBox identifier (e.g., '001')"
+    },
+    "type": {
+      "type": "string",
+      "const": "system_status",
+      "description": "Message type discriminator"
+    },
+    "connection_state": {
+      "type": "string",
+      "enum": ["online", "offline"],
+      "description": "MQTT connectivity status"
+    },
+    "auto_mode_enabled": {
+      "type": "boolean",
+      "description": "Whether automation is active"
+    },
+    "active_alerts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of current warning/alert conditions"
+    },
+    "uptime_seconds": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "System uptime since boot"
+    },
+    "current_phase": {
+      "type": "string",
+      "enum": ["vegetative", "flowering"],
+      "description": "Active growth cycle phase"
+    },
+    "days_in_phase": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Days since phase started"
+    }
+  },
+  "required": ["schema_version", "message_id", "timestamp", "box_id", "type", "connection_state", "auto_mode_enabled"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "schema_version": "1.0",
+      "message_id": "e7j1g2h6-8i5f-4g3e-2j7i-5h6g7f8e9d0k",
+      "timestamp": "2025-10-03T19:45:33Z",
+      "box_id": "001",
+      "type": "system_status",
+      "connection_state": "online",
+      "auto_mode_enabled": true,
+      "active_alerts": ["water_level_low"],
+      "uptime_seconds": 86400,
+      "current_phase": "flowering",
+      "days_in_phase": 28
+    }
+  ],
+  "mqtt_topic": "growbox/{box_id}/status",
+  "qos": 1,
+  "retained": true
+}

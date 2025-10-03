@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MQTT Device Command Message",
+  "description": "Schema for device control commands published by Mendix app or tablet UI",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Message schema version for compatibility"
+    },
+    "message_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+      "description": "UUID v4 for message deduplication"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp when command was issued"
+    },
+    "box_id": {
+      "type": "string",
+      "pattern": "^[0-9]{3}$",
+      "description": "GrowBox identifier (e.g., '001')"
+    },
+    "type": {
+      "type": "string",
+      "const": "device_command",
+      "description": "Message type discriminator"
+    },
+    "device": {
+      "type": "string",
+      "enum": ["lights", "ventilation", "pump", "heater", "co2"],
+      "description": "Device to control"
+    },
+    "command": {
+      "type": "string",
+      "enum": ["on", "off", "auto"],
+      "description": "Desired device state"
+    },
+    "source": {
+      "type": "string",
+      "enum": ["local", "remote"],
+      "description": "Command origin (local=tablet, remote=Mendix app)"
+    },
+    "triggered_by": {
+      "type": "string",
+      "description": "User identifier or session ID (optional)"
+    }
+  },
+  "required": ["schema_version", "message_id", "timestamp", "box_id", "type", "device", "command", "source"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "schema_version": "1.0",
+      "message_id": "c5h9e0f4-6g3d-4e1c-0h5g-3f4e5d6c7b8i",
+      "timestamp": "2025-10-03T19:46:15Z",
+      "box_id": "001",
+      "type": "device_command",
+      "device": "lights",
+      "command": "on",
+      "source": "remote",
+      "triggered_by": "user_mendix_123"
+    }
+  ],
+  "mqtt_topic": "growbox/{box_id}/devices/{device}/command",
+  "qos": 2,
+  "retained": false
+}

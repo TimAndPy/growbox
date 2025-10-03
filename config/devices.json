@@ -1,0 +1,40 @@
+{
+  "lights": {
+    "gpio_pin": 17,
+    "relay_type": "normally_open",
+    "active_high": true,
+    "description": "Grow lights",
+    "max_runtime_seconds": null
+  },
+  "ventilation": {
+    "gpio_pin": 27,
+    "relay_type": "normally_open",
+    "active_high": true,
+    "description": "Ventilation fan",
+    "max_runtime_seconds": null
+  },
+  "pump": {
+    "gpio_pin": 22,
+    "relay_type": "normally_open",
+    "active_high": true,
+    "description": "Water pump",
+    "max_runtime_seconds": 300,
+    "cooldown_seconds": 60
+  },
+  "heater": {
+    "gpio_pin": 10,
+    "relay_type": "normally_open",
+    "active_high": true,
+    "description": "Heater",
+    "max_runtime_seconds": null,
+    "cooldown_seconds": 60
+  },
+  "co2": {
+    "gpio_pin": 9,
+    "relay_type": "normally_open",
+    "active_high": true,
+    "description": "CO₂ system",
+    "max_runtime_seconds": 180,
+    "cooldown_seconds": 300
+  }
+}

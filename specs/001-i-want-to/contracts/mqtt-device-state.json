@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MQTT Device State Message",
+  "description": "Schema for device state update messages published by Jetson Nano",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Message schema version for compatibility"
+    },
+    "message_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$",
+      "description": "UUID v4 for message deduplication"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp when state changed"
+    },
+    "box_id": {
+      "type": "string",
+      "pattern": "^[0-9]{3}$",
+      "description": "GrowBox identifier (e.g., '001')"
+    },
+    "type": {
+      "type": "string",
+      "const": "device_state",
+      "description": "Message type discriminator"
+    },
+    "device": {
+      "type": "string",
+      "enum": ["lights", "ventilation", "pump", "heater", "co2"],
+      "description": "Device that changed state"
+    },
+    "state": {
+      "type": "string",
+      "enum": ["on", "off", "auto"],
+      "description": "Current device state"
+    },
+    "command_source": {
+      "type": "string",
+      "enum": ["local", "remote", "auto", "failsafe"],
+      "description": "What triggered this state change"
+    }
+  },
+  "required": ["schema_version", "message_id", "timestamp", "box_id", "type", "device", "state", "command_source"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "schema_version": "1.0",
+      "message_id": "d6i0f1g5-7h4e-4f2d-1i6h-4g5f6e7d8c9j",
+      "timestamp": "2025-10-03T19:46:17Z",
+      "box_id": "001",
+      "type": "device_state",
+      "device": "lights",
+      "state": "on",
+      "command_source": "remote"
+    }
+  ],
+  "mqtt_topic": "growbox/{box_id}/devices/{device}/state",
+  "qos": 1,
+  "retained": true
+}
