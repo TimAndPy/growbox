@@ -289,4 +289,4 @@ def run_app(host='0.0.0.0', port=5000):
         port: Port number (default 5000)
     """
     logger.info(f"Starting Flask app on {host}:{port}")
-    socketio.run(app, host=host, port=port, debug=False)
+    socketio.run(app, host=host, port=port, debug=False, allow_unsafe_werkzeug=True)
