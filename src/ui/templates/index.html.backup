@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowBox Control Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <img src="{{ url_for('static', filename='assets/squad-logo.png') }}" class="logo" alt="Squad Apps">
+                <h1>GrowBox Control Panel</h1>
+            </div>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Connecting...</span>
+            </div>
+        </header>
+
+
+        <!-- Sensors Section -->
+        <section class="section sensors-section">
+            <div class="sensors-grid">
+                <div class="sensor-card" id="temperature">
+                    <div class="sensor-icon-badge temp-icon">🌡</div>
+                    <div class="sensor-name">Temperature</div>
+                    <div class="sensor-value" id="tempValue">-</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="tempProgressBar" style="width: 50%;"></div>
+                    </div>
+                    <div class="sensor-target" id="tempTarget">Target: 22-25°C</div>
+                </div>
+                <div class="sensor-card" id="humidity">
+                    <div class="sensor-icon-badge humidity-icon">💧</div>
+                    <div class="sensor-name">Humidity</div>
+                    <div class="sensor-value" id="humidityValue">-</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="humidityProgressBar" style="width: 50%;"></div>
+                    </div>
+                    <div class="sensor-target" id="humidityTarget">Target: 60-70%</div>
+                </div>
+                <div class="sensor-card" id="light">
+                    <div class="sensor-icon-badge light-icon">☀</div>
+                    <div class="sensor-name">Light Level</div>
+                    <div class="sensor-value" id="lightValue">-</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="lightProgressBar" style="width: 50%;"></div>
+                    </div>
+                    <div class="sensor-target" id="lightTarget">PPFD: 400-600 μmol</div>
+                </div>
+                <div class="sensor-card" id="water">
+                    <div class="sensor-icon-badge water-icon">🚰</div>
+                    <div class="sensor-name">Water Level</div>
+                    <div class="sensor-value" id="waterValue">-</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="waterProgressBar" style="width: 50%;"></div>
+                    </div>
+                    <div class="sensor-target" id="waterTarget">Reservoir: 70%</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2-Column Layout for Controls and Growth Panel -->
+        <div class="panels-container">
+            <!-- System Controls Panel -->
+            <section class="section system-controls-panel">
+                <h2>System Controls</h2>
+                <div class="device-list">
+                    <div class="device-item">
+                        <span class="device-name">Grow Lights</span>
+                        <label class="switch">
+                            <input type="checkbox" id="lightsToggle" onchange="toggleDevice('lights')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="device-item">
+                        <span class="device-name">Ventilation</span>
+                        <label class="switch">
+                            <input type="checkbox" id="ventilationToggle" onchange="toggleDevice('ventilation')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="device-item">
+                        <span class="device-name">Water Pump</span>
+                        <label class="switch">
+                            <input type="checkbox" id="pumpToggle" onchange="toggleDevice('pump')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="device-item">
+                        <span class="device-name">Auto Mode</span>
+                        <label class="switch">
+                            <input type="checkbox" id="autoModeToggle" onchange="toggleAutoMode()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="device-item">
+                        <span class="device-name">CO₂ System</span>
+                        <label class="switch">
+                            <input type="checkbox" id="co2Toggle" onchange="toggleDevice('co2')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="device-item">
+                        <span class="device-name">Heater</span>
+                        <label class="switch">
+                            <input type="checkbox" id="heaterToggle" onchange="toggleDevice('heater')">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Growth Cycle Panel -->
+            <section class="section growth-panel">
+                <h2>Growth Cycle</h2>
+                <div class="growth-phase-highlight" id="phaseHighlight">Flowering - Day 28</div>
+                <div class="phase-toggle-container">
+                    <label class="phase-label">
+                        <span class="phase-toggle-labels">
+                            <span class="label-left">Vegetative (18/6)</span>
+                            <span class="label-right">Flowering (12/12)</span>
+                        </span>
+                        <input type="checkbox" id="phaseToggle" onchange="togglePhase()">
+                        <span class="switch">
+                            <span class="slider"></span>
+                        </span>
+                    </label>
+                </div>
+            </section>
+        </div>
+
+        <!-- Alerts Section -->
+        <section class="section alerts-section" id="alertsSection" style="display: none;">
+            <h2>Active Alerts</h2>
+            <div class="alerts-list" id="alertsList"></div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-branding">Powered by Squad Apps • Last sync: <span id="lastSyncTime">-</span></div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

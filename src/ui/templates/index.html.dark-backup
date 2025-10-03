@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowBox Control Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>GrowBox Control Panel</h1>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Connecting...</span>
+            </div>
+        </header>
+
+        <!-- Growth Phase Section -->
+        <section class="section phase-section">
+            <h2>Growth Phase</h2>
+            <div class="phase-info">
+                <div class="phase-current">
+                    <span class="label">Current Phase:</span>
+                    <span class="value" id="currentPhase">-</span>
+                </div>
+                <div class="phase-days">
+                    <span class="label">Days in Phase:</span>
+                    <span class="value" id="daysInPhase">-</span>
+                </div>
+                <div class="phase-schedule">
+                    <span class="label">Light Schedule:</span>
+                    <span class="value" id="lightSchedule">-</span>
+                </div>
+            </div>
+            <div class="phase-controls">
+                <button class="btn btn-phase" onclick="switchPhase('vegetative')">Vegetative (18/6)</button>
+                <button class="btn btn-phase" onclick="switchPhase('flowering')">Flowering (12/12)</button>
+            </div>
+        </section>
+
+        <!-- Sensors Section -->
+        <section class="section sensors-section">
+            <h2>Environmental Sensors</h2>
+            <div class="sensors-grid">
+                <div class="sensor-card" id="temperature">
+                    <div class="sensor-icon">🌡️</div>
+                    <div class="sensor-name">Temperature</div>
+                    <div class="sensor-value" id="tempValue">-</div>
+                    <div class="sensor-status" id="tempStatus"></div>
+                </div>
+                <div class="sensor-card" id="humidity">
+                    <div class="sensor-icon">💧</div>
+                    <div class="sensor-name">Humidity</div>
+                    <div class="sensor-value" id="humidityValue">-</div>
+                    <div class="sensor-status" id="humidityStatus"></div>
+                </div>
+                <div class="sensor-card" id="light">
+                    <div class="sensor-icon">☀️</div>
+                    <div class="sensor-name">Light</div>
+                    <div class="sensor-value" id="lightValue">-</div>
+                    <div class="sensor-status" id="lightStatus"></div>
+                </div>
+                <div class="sensor-card" id="water">
+                    <div class="sensor-icon">🚰</div>
+                    <div class="sensor-name">Water Level</div>
+                    <div class="sensor-value" id="waterValue">-</div>
+                    <div class="sensor-status" id="waterStatus"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Devices Section -->
+        <section class="section devices-section">
+            <h2>Device Control</h2>
+            <div class="auto-mode">
+                <label class="switch">
+                    <input type="checkbox" id="autoModeToggle" onchange="toggleAutoMode()">
+                    <span class="slider"></span>
+                </label>
+                <span class="label">Automation Mode</span>
+            </div>
+            <div class="devices-grid">
+                <div class="device-card" id="lights">
+                    <div class="device-name">Lights</div>
+                    <div class="device-state" id="lightsState">OFF</div>
+                    <div class="device-controls">
+                        <button class="btn btn-on" onclick="controlDevice('lights', 'on')">ON</button>
+                        <button class="btn btn-off" onclick="controlDevice('lights', 'off')">OFF</button>
+                    </div>
+                </div>
+                <div class="device-card" id="ventilation">
+                    <div class="device-name">Ventilation</div>
+                    <div class="device-state" id="ventilationState">OFF</div>
+                    <div class="device-controls">
+                        <button class="btn btn-on" onclick="controlDevice('ventilation', 'on')">ON</button>
+                        <button class="btn btn-off" onclick="controlDevice('ventilation', 'off')">OFF</button>
+                    </div>
+                </div>
+                <div class="device-card" id="pump">
+                    <div class="device-name">Water Pump</div>
+                    <div class="device-state" id="pumpState">OFF</div>
+                    <div class="device-controls">
+                        <button class="btn btn-on" onclick="controlDevice('pump', 'on')">ON</button>
+                        <button class="btn btn-off" onclick="controlDevice('pump', 'off')">OFF</button>
+                    </div>
+                </div>
+                <div class="device-card" id="heater">
+                    <div class="device-name">Heater</div>
+                    <div class="device-state" id="heaterState">OFF</div>
+                    <div class="device-controls">
+                        <button class="btn btn-on" onclick="controlDevice('heater', 'on')">ON</button>
+                        <button class="btn btn-off" onclick="controlDevice('heater', 'off')">OFF</button>
+                    </div>
+                </div>
+                <div class="device-card" id="co2">
+                    <div class="device-name">CO₂ Dispenser</div>
+                    <div class="device-state" id="co2State">OFF</div>
+                    <div class="device-controls">
+                        <button class="btn btn-on" onclick="controlDevice('co2', 'on')">ON</button>
+                        <button class="btn btn-off" onclick="controlDevice('co2', 'off')">OFF</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Alerts Section -->
+        <section class="section alerts-section" id="alertsSection" style="display: none;">
+            <h2>Active Alerts</h2>
+            <div class="alerts-list" id="alertsList"></div>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
