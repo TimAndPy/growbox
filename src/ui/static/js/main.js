@@ -88,16 +88,24 @@ function loadStatus() {
     fetch('/api/status')
         .then(response => response.json())
         .then(data => {
-            document.getElementById('currentPhase').textContent =
-                data.growth_phase ? capitalizeFirst(data.growth_phase) : '-';
-            document.getElementById('daysInPhase').textContent =
-                data.days_in_phase || '-';
-            document.getElementById('lightSchedule').textContent =
-                data.light_schedule || '-';
+            // Update growth phase highlight
+            const phase = data.growth_phase ? capitalizeFirst(data.growth_phase) : 'Unknown';
+            const daysInPhase = data.days_in_phase || 0;
+            document.getElementById('phaseHighlight').textContent = `${phase} - Day ${daysInPhase}`;
+
+            // Update phase toggle checked state
+            const phaseToggle = document.getElementById('phaseToggle');
+            if (phaseToggle) {
+                phaseToggle.checked = (data.growth_phase === 'flowering');
+            }
 
             document.getElementById('autoModeToggle').checked = data.auto_mode_enabled;
 
             updateAlerts(data.active_alerts || []);
+
+            // Update last sync time
+            const now = new Date();
+            document.getElementById('lastSyncTime').textContent = now.toLocaleTimeString();
         })
         .catch(error => console.error('Error loading status:', error));
 }
@@ -131,6 +139,45 @@ function loadDevices() {
 }
 
 /**
+ * Target ranges for sensors
+ */
+const SENSOR_TARGETS = {
+    'temperature': { min: 22, max: 25, unit: '°C' },
+    'humidity': { min: 60, max: 70, unit: '%' },
+    'light': { min: 400, max: 600, unit: ' μmol' },
+    'water': { min: 30, max: 100, unit: ' L' }
+};
+
+/**
+ * Update progress bar
+ */
+function updateProgressBar(sensorType, value) {
+    const target = SENSOR_TARGETS[sensorType];
+    if (!target) return;
+
+    const progressBarId = sensorType + 'ProgressBar';
+    const progressBar = document.getElementById(progressBarId);
+
+    if (progressBar) {
+        // Calculate percentage within range
+        const range = target.max - target.min;
+        let percentage = ((value - target.min) / range) * 100;
+
+        // Clamp between 0 and 100
+        percentage = Math.max(0, Math.min(100, percentage));
+
+        progressBar.style.width = percentage + '%';
+
+        // Add out-of-range class if needed
+        if (value < target.min || value > target.max) {
+            progressBar.classList.add('out-of-range');
+        } else {
+            progressBar.classList.remove('out-of-range');
+        }
+    }
+}
+
+/**
  * Update sensor display
  */
 function updateSensor(sensorType, value, unit, status) {
@@ -148,18 +195,20 @@ function updateSensor(sensorType, value, unit, status) {
         statusElement.textContent = capitalizeFirst(status);
         statusElement.className = 'sensor-status ' + status;
     }
+
+    // Update progress bar
+    updateProgressBar(sensorType, value);
 }
 
 /**
  * Update device state display
  */
 function updateDeviceState(deviceType, state) {
-    const stateId = deviceType + 'State';
-    const stateElement = document.getElementById(stateId);
+    const toggleId = deviceType + 'Toggle';
+    const toggleElement = document.getElementById(toggleId);
 
-    if (stateElement) {
-        stateElement.textContent = state.toUpperCase();
-        stateElement.className = 'device-state ' + state;
+    if (toggleElement) {
+        toggleElement.checked = (state === 'on');
     }
 }
 
@@ -208,6 +257,15 @@ function controlDevice(deviceType, command) {
 }
 
 /**
+ * Toggle device via checkbox
+ */
+function toggleDevice(deviceType) {
+    const toggleElement = document.getElementById(deviceType + 'Toggle');
+    const command = toggleElement.checked ? 'on' : 'off';
+    controlDevice(deviceType, command);
+}
+
+/**
  * Toggle automation mode
  */
 function toggleAutoMode() {
@@ -232,6 +290,15 @@ function toggleAutoMode() {
         document.getElementById('autoModeToggle').checked = !isEnabled;
         alert('Error toggling automation mode');
     });
+}
+
+/**
+ * Toggle growth phase via checkbox
+ */
+function togglePhase() {
+    const toggle = document.getElementById('phaseToggle');
+    const phase = toggle.checked ? 'flowering' : 'vegetative';
+    switchPhase(phase);
 }
 
 /**
