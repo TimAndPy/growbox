@@ -31,8 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 
 # Install Python dependencies
-# Note: Jetson.GPIO may need special handling on actual Jetson hardware
-# Install Adafruit-DHT from source for ARM64 compatibility
+# Note: Adafruit-DHT is optional - sensors will use mock data if not available
 RUN pip install --no-cache-dir paho-mqtt==1.6.1 \
     Jetson.GPIO==2.1.6 \
     Flask==2.3.3 \
@@ -44,9 +43,6 @@ RUN pip install --no-cache-dir paho-mqtt==1.6.1 \
     pytest-mock==3.11.1 \
     jsonschema==4.19.1 \
     python-dateutil==2.8.2
-
-# Install Adafruit-DHT separately from source (better ARM64 support)
-RUN pip install --no-cache-dir git+https://github.com/adafruit/Adafruit_Python_DHT.git
 
 # Copy application code
 COPY src/ ./src/
