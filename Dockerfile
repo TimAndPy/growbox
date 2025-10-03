@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libgpiod2 \
     i2c-tools \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first (better layer caching)
@@ -31,7 +32,21 @@ COPY requirements.txt .
 
 # Install Python dependencies
 # Note: Jetson.GPIO may need special handling on actual Jetson hardware
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Adafruit-DHT from source for ARM64 compatibility
+RUN pip install --no-cache-dir paho-mqtt==1.6.1 \
+    Jetson.GPIO==2.1.6 \
+    Flask==2.3.3 \
+    Flask-SocketIO==5.3.4 \
+    python-socketio==5.9.0 \
+    smbus2==0.4.2 \
+    pytest==7.4.2 \
+    pytest-cov==4.1.0 \
+    pytest-mock==3.11.1 \
+    jsonschema==4.19.1 \
+    python-dateutil==2.8.2
+
+# Install Adafruit-DHT separately from source (better ARM64 support)
+RUN pip install --no-cache-dir git+https://github.com/adafruit/Adafruit_Python_DHT.git
 
 # Copy application code
 COPY src/ ./src/
