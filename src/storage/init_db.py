@@ -97,6 +97,7 @@ def create_schema(conn):
             connection_state TEXT CHECK(connection_state IN ('online', 'offline')),
             last_mqtt_publish DATETIME,
             last_mqtt_receive DATETIME,
+            last_sensor_read DATETIME,
             auto_mode_enabled BOOLEAN DEFAULT 0,
             active_alerts TEXT,
             uptime_seconds INTEGER DEFAULT 0
