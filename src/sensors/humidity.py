@@ -11,11 +11,12 @@ from .base import BaseSensor
 logger = logging.getLogger(__name__)
 
 try:
-    import Adafruit_DHT
+    import adafruit_dht
+    import board
     DHT_AVAILABLE = True
 except ImportError:
     DHT_AVAILABLE = False
-    logger.warning("Adafruit_DHT library not available. Using mock sensor.")
+    logger.warning("adafruit_dht library not available. Using mock sensor.")
 
 
 class HumiditySensor(BaseSensor):
@@ -30,7 +31,13 @@ class HumiditySensor(BaseSensor):
         """
         super().__init__(sensor_type='humidity', unit='percent')
         self.gpio_pin = gpio_pin
-        self.sensor = Adafruit_DHT.DHT22 if DHT_AVAILABLE else None
+        if DHT_AVAILABLE:
+            # Map GPIO pin number to board pin
+            pin_map = {4: board.D4, 17: board.D17, 18: board.D18, 27: board.D27}
+            board_pin = pin_map.get(gpio_pin, board.D4)
+            self.sensor = adafruit_dht.DHT22(board_pin, use_pulseio=False)
+        else:
+            self.sensor = None
 
     def read_raw(self) -> Optional[float]:
         """
@@ -44,7 +51,7 @@ class HumiditySensor(BaseSensor):
             return 65.0
 
         try:
-            humidity, temperature = Adafruit_DHT.read_retry(self.sensor, self.gpio_pin)
+            humidity = self.sensor.humidity
 
             if humidity is not None:
                 logger.debug(f"Humidity read: {humidity}%")
@@ -53,11 +60,16 @@ class HumiditySensor(BaseSensor):
                 logger.error("Failed to read humidity from DHT22")
                 return None
 
+        except RuntimeError as e:
+            # DHT sensors often fail to read, retry on next cycle
+            logger.debug(f"DHT read error (will retry): {e}")
+            return None
         except Exception as e:
             logger.error(f"Error reading humidity: {e}")
             return None
 
     def cleanup(self):
         """Clean up DHT22 resources."""
-        # DHT22 doesn't require explicit cleanup
+        if self.sensor:
+            self.sensor.exit()
         pass

@@ -42,7 +42,7 @@ RUN pip install --no-cache-dir paho-mqtt==1.6.1 \
     pytest-mock==3.11.1 \
     jsonschema==4.19.1 \
     python-dateutil==2.8.2 \
-    Adafruit-DHT
+    adafruit-circuitpython-dht
 
 # Copy application code
 COPY src/ ./src/
