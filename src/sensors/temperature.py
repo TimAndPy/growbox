@@ -33,8 +33,8 @@ class TemperatureSensor(BaseSensor):
         self.gpio_pin = gpio_pin
         if DHT_AVAILABLE:
             # Map GPIO pin number to board pin
-            pin_map = {4: board.D4, 7: board.D7, 17: board.D17, 18: board.D18, 27: board.D27}
-            board_pin = pin_map.get(gpio_pin, board.D7)
+            pin_map = {4: board.D4, 7: board.D7, 12: board.D12, 17: board.D17, 18: board.D18, 27: board.D27}
+            board_pin = pin_map.get(gpio_pin, board.D12)
             self.sensor = adafruit_dht.DHT11(board_pin, use_pulseio=False)
         else:
             self.sensor = None
