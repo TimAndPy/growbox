@@ -35,7 +35,7 @@ class HumiditySensor(BaseSensor):
             # Map GPIO pin number to board pin
             pin_map = {4: board.D4, 17: board.D17, 18: board.D18, 27: board.D27}
             board_pin = pin_map.get(gpio_pin, board.D4)
-            self.sensor = adafruit_dht.DHT22(board_pin, use_pulseio=False)
+            self.sensor = adafruit_dht.DHT11(board_pin, use_pulseio=False)
         else:
             self.sensor = None
 
