@@ -1,15 +1,15 @@
 {
   "temperature": {
-    "type": "DHT22",
-    "gpio_pin": 4,
+    "type": "DHT11",
+    "gpio_pin": 7,
     "read_interval_seconds": 5,
     "min_value": -40,
     "max_value": 80,
     "unit": "celsius"
   },
   "humidity": {
-    "type": "DHT22",
-    "gpio_pin": 4,
+    "type": "DHT11",
+    "gpio_pin": 7,
     "read_interval_seconds": 5,
     "min_value": 0,
     "max_value": 100,
