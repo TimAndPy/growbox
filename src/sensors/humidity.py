@@ -32,9 +32,10 @@ class HumiditySensor(BaseSensor):
         super().__init__(sensor_type='humidity', unit='percent')
         self.gpio_pin = gpio_pin
         if DHT_AVAILABLE:
-            # Map GPIO pin number to board pin
-            pin_map = {4: board.D4, 7: board.D7, 12: board.D12, 17: board.D17, 18: board.D18, 27: board.D27}
-            board_pin = pin_map.get(gpio_pin, board.D12)
+            # Map physical pin number to board pin (Blinka uses RPi BCM numbering!)
+            # Physical pin 7 = board.D4, Physical pin 12 = board.D18, etc.
+            pin_map = {7: board.D4, 12: board.D18, 18: board.D24, 22: board.D25}
+            board_pin = pin_map.get(gpio_pin, board.D18)
             self.sensor = adafruit_dht.DHT11(board_pin, use_pulseio=False)
         else:
             self.sensor = None
