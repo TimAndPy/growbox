@@ -30,7 +30,7 @@ class HumiditySensor(BaseSensor):
         """
         super().__init__(sensor_type='humidity', unit='percent')
         self.gpio_pin = gpio_pin
-        # C_DHT library uses hardcoded pins - PIN0 is set to Nano pin 12
+        # C_DHT library uses hardcoded pins - PIN0 is set to Nano pin 18
         # We use sensor index 0 which corresponds to PIN0
         self.sensor_index = 0
 

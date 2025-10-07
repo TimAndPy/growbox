@@ -33,8 +33,8 @@ COPY requirements.txt .
 # Clone and build Jetson-specific DHT library
 RUN git clone --recurse-submodules -j8 https://github.com/GrgoMariani/NVidia-Jetson-DHT22-Python /tmp/jetson-dht && \
     cd /tmp/jetson-dht && \
-    sed -i 's/#define PIN0 jetsonxavier_pin37/#define PIN0 jetsonnano_pin12/' C_DHT.c && \
-    sed -i 's/\/\/ This is currently set to work with Jetson Xavier/\/\/ Modified for Jetson Nano GPIO pin 12/' C_DHT.c && \
+    sed -i 's/#define PIN0 jetsonxavier_pin37/#define PIN0 jetsonnano_pin18/' C_DHT.c && \
+    sed -i 's/\/\/ This is currently set to work with Jetson Xavier/\/\/ Modified for Jetson Nano GPIO pin 18/' C_DHT.c && \
     python3 setup.py build && \
     python3 setup.py install && \
     cd / && \
