@@ -1,6 +1,6 @@
 """
-Temperature sensor implementation using DHT22.
-Reads temperature from Adafruit DHT sensor library.
+Temperature sensor implementation using DHT11/DHT22.
+Reads temperature from Jetson-specific C_DHT library.
 """
 
 from typing import Optional
@@ -11,66 +11,61 @@ from .base import BaseSensor
 logger = logging.getLogger(__name__)
 
 try:
-    import adafruit_dht
-    import board
+    import C_DHT
     DHT_AVAILABLE = True
 except ImportError:
     DHT_AVAILABLE = False
-    logger.warning("adafruit_dht library not available. Using mock sensor.")
+    logger.warning("C_DHT library not available. Using mock sensor.")
 
 
 class TemperatureSensor(BaseSensor):
-    """Temperature sensor using DHT22."""
+    """Temperature sensor using DHT11."""
 
     def __init__(self, gpio_pin: int):
         """
-        Initialize DHT22 temperature sensor.
+        Initialize DHT11 temperature sensor using Jetson C_DHT library.
 
         Args:
-            gpio_pin: GPIO pin number where DHT22 is connected
+            gpio_pin: GPIO pin number (must match PIN0 definition in C_DHT.c)
         """
         super().__init__(sensor_type='temperature', unit='celsius')
         self.gpio_pin = gpio_pin
-        if DHT_AVAILABLE:
-            # Map physical pin number to board pin (Blinka uses RPi BCM numbering!)
-            # Physical pin 7 = board.D4, Physical pin 12 = board.D18, etc.
-            pin_map = {7: board.D4, 12: board.D18, 18: board.D24, 22: board.D25}
-            board_pin = pin_map.get(gpio_pin, board.D18)
-            self.sensor = adafruit_dht.DHT11(board_pin, use_pulseio=False)
-        else:
-            self.sensor = None
+        # C_DHT library uses hardcoded pins - PIN0 is set to Nano pin 12
+        # We use sensor index 0 which corresponds to PIN0
+        self.sensor_index = 0
 
     def read_raw(self) -> Optional[float]:
         """
-        Read temperature from DHT22 sensor.
+        Read temperature from DHT11 sensor using C_DHT library.
 
         Returns:
             Temperature in Celsius or None if read fails
         """
         if not DHT_AVAILABLE:
-            logger.debug("Mock temperature read (DHT not available)")
+            logger.debug("Mock temperature read (C_DHT not available)")
             return 22.5
 
         try:
-            temperature = self.sensor.temperature
+            # C_DHT.readSensorDHT11 returns (temperature, humidity) tuple
+            result = C_DHT.readSensorDHT11(self.sensor_index)
 
-            if temperature is not None:
-                logger.debug(f"Temperature read: {temperature}°C")
-                return round(temperature, 1)
+            if result and len(result) >= 2:
+                temperature = result[0]
+                if temperature is not None and temperature != 0.0:
+                    logger.debug(f"Temperature read: {temperature}°C")
+                    return round(temperature, 1)
+                else:
+                    logger.debug("DHT11 read returned 0 or None")
+                    return None
             else:
-                logger.error("Failed to read temperature from DHT22")
+                logger.error("Failed to read from DHT11 sensor")
                 return None
 
-        except RuntimeError as e:
-            # DHT sensors often fail to read, retry on next cycle
-            logger.debug(f"DHT read error (will retry): {e}")
-            return None
         except Exception as e:
-            logger.error(f"Error reading temperature: {e}")
+            logger.error(f"Error reading temperature from DHT11: {e}")
             return None
 
     def cleanup(self):
-        """Clean up DHT22 resources."""
-        if self.sensor:
-            self.sensor.exit()
+        """Clean up DHT11 resources."""
+        # C_DHT library doesn't require explicit cleanup
         pass

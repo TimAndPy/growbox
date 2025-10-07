@@ -30,6 +30,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy requirements first (better layer caching)
 COPY requirements.txt .
 
+# Clone and build Jetson-specific DHT library
+RUN git clone --recurse-submodules -j8 https://github.com/GrgoMariani/NVidia-Jetson-DHT22-Python /tmp/jetson-dht && \
+    cd /tmp/jetson-dht && \
+    sed -i 's/#define PIN0 jetsonxavier_pin37/#define PIN0 jetsonnano_pin12/' C_DHT.c && \
+    sed -i 's/\/\/ This is currently set to work with Jetson Xavier/\/\/ Modified for Jetson Nano GPIO pin 12/' C_DHT.c && \
+    python3 setup.py build && \
+    python3 setup.py install && \
+    cd / && \
+    rm -rf /tmp/jetson-dht
+
 # Install Python dependencies
 RUN pip install --no-cache-dir paho-mqtt==1.6.1 \
     Jetson.GPIO==2.1.6 \
@@ -41,8 +51,7 @@ RUN pip install --no-cache-dir paho-mqtt==1.6.1 \
     pytest-cov==4.1.0 \
     pytest-mock==3.11.1 \
     jsonschema==4.19.1 \
-    python-dateutil==2.8.2 \
-    adafruit-circuitpython-dht
+    python-dateutil==2.8.2
 
 # Copy application code
 COPY src/ ./src/
